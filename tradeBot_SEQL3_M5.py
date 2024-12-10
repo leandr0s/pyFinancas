@@ -20,8 +20,9 @@ while True:
     mt5.symbol_select(ticker)
     
 
-    def verificaVenda(cont_venda):
-        return cont_venda + 1
+    def verificaVenda(total_vendas):
+        cont_venda = total_vendas + 1
+        return cont_venda
 
 
     def pegando_dados(ativo_negociado, intervalo, data_de_inicio, data_fim):
@@ -94,9 +95,10 @@ while True:
 
                         print("VENDEU O ATIVO -> "+ticker)
                     else: print("CONTANDO "+str(cont_venda)+" PRA VENCER O ATIVO -> "+ticker)
+        return cont_venda
 
 
-    estrategia_trade(dados_atualizados, ticker, cont_venda,idx_venda)
+    cont_venda = estrategia_trade(dados_atualizados, ticker, cont_venda,idx_venda)
 
     time.sleep(70)
 
