@@ -1,0 +1,6 @@
+
+executor
+
+/c/Users/leandro/anaconda3/python tradeBot.py
+
+ambient bash
