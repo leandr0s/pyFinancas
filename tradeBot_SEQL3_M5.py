@@ -6,6 +6,8 @@ from datetime import datetime, timedelta
 
 
 mt5.initialize() 
+cont_venda = 0
+idx_venda = 10
 
 
 while True:
@@ -16,12 +18,10 @@ while True:
     data_final = datetime.today()
     data_inicial = datetime.today() - timedelta(days = 10)
     mt5.symbol_select(ticker)
-    cont_venda = 0
-    idx_venda = 10
+    
 
-    def verificaVenda(cont_venda,idx_venda):
-        cont_venda = cont_venda + 1
-        return cont_venda
+    def verificaVenda(cont_venda):
+        return cont_venda + 1
 
 
     def pegando_dados(ativo_negociado, intervalo, data_de_inicio, data_fim):
@@ -76,7 +76,7 @@ while True:
         elif ultima_media_rapida <= ultima_media_devagar:
 
                 if len(posicao) != 0:
-                    cont_venda = verificaVenda(cont_venda,idx_venda)
+                    cont_venda = verificaVenda(cont_venda)
                     if cont_venda >= idx_venda :
                         preco_de_tela = mt5.symbol_info(ativo).bid
 
