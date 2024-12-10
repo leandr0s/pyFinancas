@@ -21,9 +21,7 @@ while True:
 
     def verificaVenda(cont_venda,idx_venda):
         cont_venda = cont_venda + 1
-        if cont_venda >= idx_venda: 
-            return True
-        return False
+        return cont_venda
 
 
     def pegando_dados(ativo_negociado, intervalo, data_de_inicio, data_fim):
@@ -78,7 +76,8 @@ while True:
         elif ultima_media_rapida <= ultima_media_devagar:
 
                 if len(posicao) != 0:
-                    if verificaVenda(cont_venda,idx_venda):
+                    cont_venda = verificaVenda(cont_venda,idx_venda)
+                    if cont_venda >= idx_venda :
                         preco_de_tela = mt5.symbol_info(ativo).bid
 
                         ordem_venda = {
@@ -94,7 +93,7 @@ while True:
                         mt5.order_send(ordem_venda)
 
                         print("VENDEU O ATIVO -> "+ticker)
-                    else: print("CONTANDO PRA VENCER O ATIVO -> "+ticker)
+                    else: print("CONTANDO "+str(cont_venda)+" PRA VENCER O ATIVO -> "+ticker)
 
 
     estrategia_trade(dados_atualizados, ticker, cont_venda,idx_venda)
