@@ -6,6 +6,8 @@ from datetime import datetime, timedelta
 
 
 mt5.initialize() 
+cont_venda = 0
+idx_venda = 10
 
 
 while True:
@@ -16,22 +18,23 @@ while True:
     data_final = datetime.today()
     data_inicial = datetime.today() - timedelta(days = 10)
     mt5.symbol_select(ticker)
-    cont_venda = 0
-    idx_venda = 10
-
+   
+    def verificaVenda(total_vendas):
+        cont_venda = total_vendas + 1
+        return cont_venda
 
     def pegando_dados(ativo_negociado, intervalo, data_de_inicio, data_fim):
 
         dados = mt5.copy_rates_range(ativo_negociado, intervalo, data_de_inicio, data_fim)
         dados = pd.DataFrame(dados)
-        print(dados)
+        #print(dados)
         dados["time"] = pd.to_datetime(dados["time"], unit = "s")
         return dados
 
 
     dados_atualizados = pegando_dados(ticker, intervalo, data_inicial, data_final)
 
-    def estrategia_trade(dados, ativo):
+    def estrategia_trade(dados, ativo, cont_venda, idx_venda):
 
         #se a média rápida for maior do que média lenta, eu vou comprar.
 
@@ -71,10 +74,9 @@ while True:
 
         elif ultima_media_rapida <= ultima_media_devagar:
 
-                if len(posicao) != 0:
-                    cont_venda = cont_venda + 1
-                    if cont_venda >= idx_venda: 
-
+             if len(posicao) != 0:
+                    cont_venda = verificaVenda(cont_venda)
+                    if cont_venda >= idx_venda :
                         preco_de_tela = mt5.symbol_info(ativo).bid
 
                         ordem_venda = {
@@ -90,10 +92,11 @@ while True:
                         mt5.order_send(ordem_venda)
 
                         print("VENDEU O ATIVO -> "+ticker)
-                    else: print("CONTANDO PRA VENCER O ATIVO -> "+ticker)
+                    else: print("CONTANDO "+str(cont_venda)+" PRA VENCER O ATIVO -> "+ticker)
+        return cont_venda
 
 
-    estrategia_trade(dados_atualizados, ticker)
+    cont_venda = estrategia_trade(dados_atualizados, ticker, cont_venda, idx_venda)
 
     time.sleep(70)
 

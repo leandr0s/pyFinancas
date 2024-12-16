@@ -9,7 +9,7 @@ mt5.initialize()
 
 
 
-ticker = "OIBR3"
+ticker = "NZDUSD"
 intervalo = mt5.TIMEFRAME_M5
 data_final = datetime.today()
 data_inicial = datetime.today() - timedelta(days = 10)
@@ -34,37 +34,40 @@ def estrategia_trade(dados, ativo):
     dados["media_rapida"] = dados["close"].rolling(7).mean()
     dados["media_devagar"] = dados["close"].rolling(40).mean()
 
-    ultima_media_rapida = dados["media_rapida"].iloc[-1]
+    #ultima_media_rapida = dados["media_rapida"].iloc[-1]
     ultima_media_devagar = dados["media_devagar"].iloc[-1]
+
+    ultima_media_rapida = 3
 
     print(f"Última Média Rápida: {ultima_media_rapida} | Última Média Devagar: {ultima_media_devagar}")
 
-    #ultima_media_rapida = 10
 
-posicao = mt5.positions_get(symbol = ticker)
+    posicao = mt5.positions_get(symbol = ativo)
 
-print('posição-> '+str(posicao))
+    print('posição-> '+str(posicao))
+
+    #if ultima_media_rapida > ultima_media_devagar:
+
+        #if len(posicao) == 0:
+
+    preco_de_tela = mt5.symbol_info(ativo).ask
+
+    ordem_compra = {
+        "action": mt5.TRADE_ACTION_DEAL, #trade a mercado
+        "symbol": ativo,
+        "volume": 100.0,
+        "type": mt5.ORDER_TYPE_BUY,
+        "price": preco_de_tela,
+        "type_time": mt5.ORDER_TIME_DAY, #so manda a ordem se o mercado tiver aberto
+        "type_filling": mt5.ORDER_FILLING_RETURN,
+                                                        }
+    
+    mt5.order_send(ordem_compra)
+
+    print("COMPROU O ATIVO -> "+ticker)
 
 
-preco_de_tela = mt5.symbol_info(ticker).ask
-
-ordem_compra = {
-    "action": mt5.TRADE_ACTION_DEAL, #trade a mercado
-    "symbol": ticker,
-    "volume": 100.0,
-    "type": mt5.ORDER_TYPE_BUY,
-    "price": preco_de_tela,
-    "type_time": mt5.ORDER_TIME_DAY, #so manda a ordem se o mercado tiver aberto
-    "type_filling": mt5.ORDER_FILLING_RETURN,
-                                                    }
-
-order_send = mt5.order_send(ordem_compra)
-
-print(order_send)
-#print(posicao)
-
-print("COMPROU O ATIVO -> "+ticker)
-
+estrategia_trade(dados_atualizados, ticker)
 
 
 

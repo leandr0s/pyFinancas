@@ -24,7 +24,7 @@ while True:
 
         dados = mt5.copy_rates_range(ativo_negociado, intervalo, data_de_inicio, data_fim)
         dados = pd.DataFrame(dados)
-        print(dados)
+        #print(dados)
         dados["time"] = pd.to_datetime(dados["time"], unit = "s")
         return dados
 

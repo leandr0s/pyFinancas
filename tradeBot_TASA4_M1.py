@@ -7,68 +7,22 @@ from datetime import datetime, timedelta
 
 mt5.initialize()
 cont_venda = 0
-idx_venda = 10
-sleep = 70
-ticker = "TASA4"#"EURUSD"#"AUDCHF"#"AUDCAD"#"TASA4"
-volume = 100.0
-margem = 3
+idx_venda = 10 
+
 
 while True:
-    
-    intervalo = mt5.TIMEFRAME_M1
+
+
+    ticker = "TASA4"
+    intervalo = mt5.TIMEFRAME_M5
     data_final = datetime.today()
     data_inicial = datetime.today() - timedelta(days = 10)
     mt5.symbol_select(ticker)
 
-    def realizaLucro(ticker):
-        order =None
-        if float(get_preco_compra(ticker))-float(get_preco_corrente(ticker)) >= margem:
-            order = realizaVenda(ticker)
-            print("******************** LUCRO REALIZADO")
-        else: print("******************** FORA DA MARGEM LUCRO")
-        return order
-    
-    def gravaUltimaCompra(ticker,order):
-        #print(order[-1][5])
-        df_cotacao = pd.DataFrame(order[-1])
-        #print(df_cotacao)
-        df_cotacao.to_csv('dados/cotacoes_'+ticker+'.csv', sep=';', index=None)
-
-    def get_preco_compra(ticker):
-        df = pd.read_csv('dados/cotacoes_'+ticker+'.csv' , sep=';')
-        if df.empty:
-            df.add([5,0])
-        return df.iloc[5].iloc[0]
-
-    def get_preco_corrente(ticker):
-        #Obtém o preço atual do ativo.
-        t = mt5.symbol_info_tick(ticker)
-        if t is None:
-            print(f"Erro ao obter o preço atual: {mt5.last_error()}")
-            return None
-        return t.bid  # Preço de compra atual
-
-
     def verificaVenda(total_vendas):
         cont_venda = total_vendas + 1
         return cont_venda 
-    
-    def realizaVenda(ativo):
-        preco_de_tela = mt5.symbol_info(ativo).bid
-        ordem_venda = {
-            "action": mt5.TRADE_ACTION_DEAL, #trade a mercado
-            "symbol": ativo,
-            "volume": volume,
-            "type": mt5.ORDER_TYPE_SELL,
-            "price": preco_de_tela,
-            "type_time": mt5.ORDER_TIME_DAY, #so manda a ordem se o mercado tiver aberto
-            "type_filling": mt5.ORDER_FILLING_RETURN,
-                                                            }
 
-        orderm_send = mt5.order_send(ordem_venda)
-
-        print("VENDEU O ATIVO -> "+ticker)
-        return orderm_send
 
     def pegando_dados(ativo_negociado, intervalo, data_de_inicio, data_fim):
 
@@ -97,7 +51,7 @@ while True:
 
         posicao = mt5.positions_get(symbol = ativo)
 
-        #print('posição-> '+str(posicao))
+        print('posição-> '+str(posicao))
 
         if ultima_media_rapida > ultima_media_devagar:
 
@@ -108,15 +62,15 @@ while True:
                 ordem_compra = {
                     "action": mt5.TRADE_ACTION_DEAL, #trade a mercado
                     "symbol": ativo,
-                    "volume": volume,
+                    "volume": 100.0,
                     "type": mt5.ORDER_TYPE_BUY,
                     "price": preco_de_tela,
                     "type_time": mt5.ORDER_TIME_DAY, #so manda a ordem se o mercado tiver aberto
                     "type_filling": mt5.ORDER_FILLING_RETURN,
                                                                     }
                 
-                order_send = mt5.order_send(ordem_compra)
-                gravaUltimaCompra(ticker,order_send)
+                mt5.order_send(ordem_compra)
+
                 print("COMPROU O ATIVO -> "+ticker)
 
         elif ultima_media_rapida <= ultima_media_devagar:
@@ -124,18 +78,28 @@ while True:
                 if len(posicao) != 0:
                     cont_venda = verificaVenda(cont_venda)
                     if cont_venda >= idx_venda :
-                        realizaVenda(ativo)
+                        preco_de_tela = mt5.symbol_info(ativo).bid
+
+                        ordem_venda = {
+                            "action": mt5.TRADE_ACTION_DEAL, #trade a mercado
+                            "symbol": ativo,
+                            "volume": 100.0,
+                            "type": mt5.ORDER_TYPE_SELL,
+                            "price": preco_de_tela,
+                            "type_time": mt5.ORDER_TIME_DAY, #so manda a ordem se o mercado tiver aberto
+                            "type_filling": mt5.ORDER_FILLING_RETURN,
+                                                                            }
+                        
+                        mt5.order_send(ordem_venda)
+
+                        print("VENDEU O ATIVO -> "+ticker)
                     else: print("CONTANDO "+str(cont_venda)+" PRA VENCER O ATIVO -> "+ticker)
         return cont_venda
 
 
     cont_venda = estrategia_trade(dados_atualizados, ticker, cont_venda, idx_venda)
-    realizaLucro(ticker)
-    print("######################## preco atual "+str(get_preco_corrente(ticker)))
-    print("######################## preco compra "+str(get_preco_compra(ticker)))
-    print("######################## preco compra "+str(float(get_preco_compra(ticker))-float(get_preco_corrente(ticker))))
 
-    time.sleep(sleep)
+    time.sleep(70)
 
 
 
