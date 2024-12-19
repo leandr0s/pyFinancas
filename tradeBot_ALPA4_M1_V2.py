@@ -9,7 +9,7 @@ mt5.initialize()
 cont_venda = 0
 idx_venda = 10
 sleep = 10
-ticker = "MGLU3"
+ticker = "ALPA4"
 volume = 100.0
 margem = 3
 prejuizo = -10
@@ -21,10 +21,10 @@ while True:
     data_inicial = datetime.today() - timedelta(days = 10)
     mt5.symbol_select(ticker)
 
-    def realizaLucro(ticker, cont_venda):
+    def realizaLucro(ticker):
         order =None
         if (float(get_preco_corrente(ticker))-float(get_preco_compra(ticker)))*volume >= margem:
-            order, cont_venda = realizaVenda(ticker, cont_venda)
+            order = realizaVenda(ticker)
             print("******************** LUCRO REALIZADO")
         else: print("******************** FORA DA MARGEM LUCRO")
         return order
@@ -52,13 +52,13 @@ while True:
     def verificaVenda(ticker,cont_venda):
         if (float(get_preco_corrente(ticker))-float(get_preco_compra(ticker)))*volume <= prejuizo:
             if cont_venda >= idx_venda :
-                order, cont_venda = realizaVenda(ticker, cont_venda)
+                realizaVenda(ticker)
             else: 
                 print("CONTANDO "+str(cont_venda)+" PRA VENCER O ATIVO -> "+ticker)
                 cont_venda = cont_venda + 1
         return cont_venda 
     
-    def realizaVenda(ticker, cont_venda):
+    def realizaVenda(ticker):
         preco_de_tela = mt5.symbol_info(ticker).bid
         ordem_venda = {
             "action": mt5.TRADE_ACTION_DEAL, #trade a mercado
@@ -69,9 +69,9 @@ while True:
             "type_time": mt5.ORDER_TIME_DAY, #so manda a ordem se o mercado tiver aberto
             "type_filling": mt5.ORDER_FILLING_RETURN,                                                             }
         orderm_send = mt5.order_send(ordem_venda)
-        cont_venda = 0
+
         print("VENDEU O ATIVO -> "+ticker)
-        return orderm_send, cont_venda
+        return orderm_send
 
     def pegando_dados(ativo_negociado, intervalo, data_de_inicio, data_fim):
 
@@ -129,7 +129,7 @@ while True:
 
 
     cont_venda = estrategia_trade(dados_atualizados, ticker, cont_venda, idx_venda)
-    cont_venda = realizaLucro(ticker, cont_venda)
+    realizaLucro(ticker)
     print("######################## preco atual "+str(get_preco_corrente(ticker)))
     print("######################## preco compra "+str(get_preco_compra(ticker)))
     print("######################## diferenca "+str((float(get_preco_corrente(ticker))-float(get_preco_compra(ticker)))*volume))

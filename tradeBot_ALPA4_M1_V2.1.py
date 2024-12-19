@@ -9,7 +9,7 @@ mt5.initialize()
 cont_venda = 0
 idx_venda = 10
 sleep = 10
-ticker = "MGLU3"
+ticker = "ALPA4"
 volume = 100.0
 margem = 3
 prejuizo = -10
