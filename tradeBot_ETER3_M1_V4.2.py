@@ -3,7 +3,7 @@ import time
 import pandas as pd
 
 # Configurações do ativo e estratégia
-SYMBOL = "USIM5"  # Substitua pelo símbolo desejado
+SYMBOL = "ETER3"  # Substitua pelo símbolo desejado
 LOT = 100.0  # Tamanho do lote
 TIMEFRAME = mt5.TIMEFRAME_M1  # Timeframe de 1 minuto
 FAST_EMA = 5  # Período da EMA rápida

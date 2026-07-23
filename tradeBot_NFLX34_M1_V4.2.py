@@ -3,7 +3,7 @@ import time
 import pandas as pd
 
 # Configurações do ativo e estratégia
-SYMBOL = "PETZ3"  # Substitua pelo símbolo desejado
+SYMBOL = "NFLX34"  # Substitua pelo símbolo desejado
 LOT = 100.0  # Tamanho do lote
 TIMEFRAME = mt5.TIMEFRAME_M1  # Timeframe de 1 minuto
 FAST_EMA = 5  # Período da EMA rápida
@@ -11,7 +11,7 @@ SLOW_EMA = 20  # Período da EMA lenta
 PROFIT_MARGIN = 2.0  # Margem de lucro em reais
 LOSS_THRESHOLD = -10.0  # Margem de prejuízo por operação
 CONSECUTIVE_LOSS_THRESHOLD = 20  # Número de perdas consecutivas para venda
-DELAY_LOSS = 500
+DELAY_LOSS = 50
 DELAY = 10  # Intervalo entre execuções (em segundos)
 
 # Inicializar MetaTrader 5

@@ -3,7 +3,7 @@ import time
 import pandas as pd
 
 # Configurações do ativo e estratégia
-SYMBOL = "OIBR3"  # Substitua pelo símbolo desejado
+SYMBOL = "ELET6"  # Substitua pelo símbolo desejado
 LOT = 100.0  # Tamanho do lote
 TIMEFRAME = mt5.TIMEFRAME_M1  # Timeframe de 1 minuto
 FAST_EMA = 5  # Período da EMA rápida
@@ -21,7 +21,6 @@ if not mt5.initialize():
 
 # Função para obter dados de mercado
 def get_data(symbol, timeframe, n_bars):
-    
     rates = mt5.copy_rates_from_pos(symbol, timeframe, 0, n_bars)
     if rates is None:
         print("Erro ao obter dados de mercado:", mt5.last_error())
